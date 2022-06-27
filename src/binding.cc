@@ -374,7 +374,8 @@ Value ReadInt64(const CallbackInfo& args) {
     throw TypeError::New(env, "readInt64: Cannot read from nullptr pointer");
   }
 
-  int64_t val = *reinterpret_cast<int64_t*>(ptr);
+  int64_t val;
+  std::memcpy(&val, ptr, sizeof val);
 
   if (val < JS_MIN_INT || val > JS_MAX_INT) {
     char strbuf[128];
@@ -400,7 +401,8 @@ Value ReadInt32(const CallbackInfo& args) {
     throw TypeError::New(env, "readInt64: Cannot read from nullptr pointer");
   }
 
-  int32_t val = *reinterpret_cast<int32_t*>(ptr);
+  int32_t val;
+  std::memcpy(&val, ptr, sizeof val);
 
   return Number::New(env, val);
 }
@@ -446,7 +448,7 @@ void WriteInt64(const CallbackInfo& args) {
     throw TypeError::New(env, "writeInt64: Number/String 64-bit value required");
   }
 
-  *reinterpret_cast<int64_t*>(ptr) = val;
+  std::memcpy(ptr, &val, sizeof val);
 }
 
 
@@ -485,7 +487,7 @@ void WriteInt32(const CallbackInfo& args) {
       throw TypeError::New(env, "writeInt32: value out of range");
   }
 
-  *reinterpret_cast<int32_t*>(ptr) = (int32_t)val;
+  std::memcpy(ptr, &val, sizeof val);
 }
 
 Value ReadUInt32(const CallbackInfo& args) {
